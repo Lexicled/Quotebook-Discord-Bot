@@ -14,6 +14,7 @@ IMAGE_FORMAT = ".jpg"
 WIDTH = 960
 HEIGHT = 540
 PREFIX = "qb"
+PATH_TO_WORKING_DIR = ""
 
 # Utils
 def GetErrorMessage(format: str) -> str:
@@ -108,21 +109,21 @@ def GetTextInfo(quote: str, author: str, maxWidth: int, maxHeight: int, sans: bo
 
 # Filesystem
 def GetToken() -> str:
-    with open("db/config.json", 'r') as f:
+    with open(PATH_TO_WORKING_DIR + "db/config.json", 'r') as f:
         data = json.loads(f.read())
         return data["token"]
 
 def GetChannelID() -> int:
-    with open("db/config.json", 'r') as f:
+    with open(PATH_TO_WORKING_DIR + "db/config.json", 'r') as f:
         data = json.loads(f.read())
         return data["channelId"]
 
 def AddImage(url: str) -> None:
-    with open("db/images.txt", 'a') as f:
+    with open(PATH_TO_WORKING_DIR + "db/images.txt", 'a') as f:
         f.writelines(["\n" + url])
 
 def GetRandomImageURL() -> str:
-    with open("db/images.txt", 'r') as f:
+    with open(PATH_TO_WORKING_DIR + "db/images.txt", 'r') as f:
         lines = f.readlines()
         n = random.randint(0, len(lines) - 1)
         return lines[n]
@@ -134,12 +135,12 @@ def GenerateImageID(existingImages: list) -> str:
     return id
 
 def SaveQuote(quote: str, author: str, finalImage: Image, sans: bool) -> str:
-    existingImages = os.listdir("db/images")
-    imgAddr = "db/images/" + GenerateImageID(existingImages) + IMAGE_FORMAT
+    existingImages = os.listdir(PATH_TO_WORKING_DIR + "db/images")
+    imgAddr = PATH_TO_WORKING_DIR + "db/images/" + GenerateImageID(existingImages) + IMAGE_FORMAT
     finalImage.save(imgAddr)
 
     quotes = []
-    with open("db/quotes.json", 'r') as f:
+    with open(PATH_TO_WORKING_DIR + "db/quotes.json", 'r') as f:
         try:
             quotes = json.loads(f.read())
         except:
@@ -159,14 +160,14 @@ def SaveQuote(quote: str, author: str, finalImage: Image, sans: bool) -> str:
 
 def GetFont(sans: bool) -> ImageFont:
     if (sans): 
-        return ImageFont.truetype('resources/sans.ttf', FONT_SIZE)
+        return ImageFont.truetype(PATH_TO_WORKING_DIR + 'resources/sans.ttf', FONT_SIZE)
     else:
-        return ImageFont.truetype('resources/font.ttf', FONT_SIZE)
+        return ImageFont.truetype(PATH_TO_WORKING_DIR + 'resources/font.ttf', FONT_SIZE)
 
 # Image Processing
 def CreateQuote(quote: str, author: str, sans: bool) -> str:
     bgImg = Image.open(BytesIO(requests.get(GetRandomImageURL()).content)).resize((WIDTH, HEIGHT))
-    vignetteImg = Image.open("resources/vignette.png")
+    vignetteImg = Image.open(PATH_TO_WORKING_DIR + "resources/vignette.png")
 
     bgImg.paste(vignetteImg, (0, 0), mask=vignetteImg)
 

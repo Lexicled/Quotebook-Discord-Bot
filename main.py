@@ -14,7 +14,7 @@ IMAGE_FORMAT = ".jpg"
 WIDTH = 960
 HEIGHT = 540
 PREFIX = "qb"
-PATH_TO_WORKING_DIR = "/app/"
+PATH_TO_WORKING_DIR = os.path.dirname(os.path.realpath(__file__)) + "/"
 
 # Utils
 def GetErrorMessage(format: str) -> str:

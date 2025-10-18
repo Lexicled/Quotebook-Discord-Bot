@@ -170,7 +170,10 @@ def CreateQuote(quote: str, author: str, sans: bool) -> str:
     try:
         bgImg = Image.open(BytesIO(requests.get(GetRandomImageURL()).content)).convert('RGB').resize((WIDTH, HEIGHT))
     except:
-        bgImg = Image.open(PATH_TO_WORKING_DIR + "resources/placeholder.png").convert('RGB').resize((WIDTH, HEIGHT))
+        placeholderImages = os.listdir(PATH_TO_WORKING_DIR + "db/placeholder")
+        n = random.randint(0, len(placeholderImages) - 1)
+        bgImg = Image.open(PATH_TO_WORKING_DIR + "db/placeholder/" + placeholderImages[n]).convert('RGB').resize((WIDTH, HEIGHT))
+
         lines = []
         with open(PATH_TO_WORKING_DIR + "db/images.txt", 'r') as f: lines = f.readlines()
 
@@ -197,6 +200,7 @@ def CreateQuote(quote: str, author: str, sans: bool) -> str:
 
     filename = SaveQuote(quote, author, bgImg, sans)
     return filename
+
 
 # Discord
 intents = discord.Intents.default()

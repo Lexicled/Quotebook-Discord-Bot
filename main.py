@@ -109,9 +109,7 @@ def GetTextInfo(quote: str, author: str, maxWidth: int, maxHeight: int, sans: bo
 
 # Filesystem
 def GetToken() -> str:
-    with open(PATH_TO_WORKING_DIR + "db/config.json", 'r') as f:
-        data = json.loads(f.read())
-        return data["token"]
+    return os.getenv("DISCORD_TOKEN")
 
 def GetChannelID() -> int:
     with open(PATH_TO_WORKING_DIR + "db/config.json", 'r') as f:

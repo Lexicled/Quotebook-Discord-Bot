@@ -233,6 +233,21 @@ async def on_message(message):
 
                     await message.channel.send(GetSuccessMessage())
                 else: await message.channel.send(GetErrorMessage(f"{PREFIX} save q=[quote] a=[author]"))
+            case "sans":
+                if (len(cmd) >= 4):
+                    quote = message.content.split("=")[1][:-2]
+                    author = message.content.split("=")[2]
+
+                    path = CreateQuote(quote, author, True)
+                    filename = path.split("/")[len(path.split("/")) - 1]
+
+                    file = discord.File(path, filename=filename)
+                    embed = discord.Embed()
+                    embed.set_image(url=f"attachment://{filename}")
+                    await client.get_channel(chId).send(file=file, embed=embed)
+
+                    await message.channel.send(GetSuccessMessage())
+                else: await message.channel.send(GetErrorMessage(f"{PREFIX} save q=[quote] a=[author]"))
             case "image":
                 if (len(cmd) == 3):
                     try:

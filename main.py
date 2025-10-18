@@ -14,7 +14,7 @@ IMAGE_FORMAT = ".jpg"
 WIDTH = 960
 HEIGHT = 540
 PREFIX = "qb"
-PATH_TO_WORKING_DIR = ""
+PATH_TO_WORKING_DIR = "/app/"
 
 # Utils
 def GetErrorMessage(format: str) -> str:
@@ -198,61 +198,59 @@ def CreateQuote(quote: str, author: str, sans: bool) -> str:
     filename = SaveQuote(quote, author, bgImg, sans)
     return filename
 
-CreateQuote("Test quote", "big man", False)
-
 # Discord
-# intents = discord.Intents.default()
-# intents.message_content = True
+intents = discord.Intents.default()
+intents.message_content = True
 
-# client = discord.Client(intents=intents)
+client = discord.Client(intents=intents)
 
-# chId = GetChannelID()
+chId = GetChannelID()
 
-# @client.event
-# async def on_ready():
-#     print(f"Logged in as {client.user}")
+@client.event
+async def on_ready():
+    print(f"Logged in as {client.user}")
 
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
 
-#     if message.content.startswith(PREFIX):
-#         cmd = message.content.split(" ")
-#         match cmd[1]:
-#             case "save":
-#                 if (len(cmd) >= 4):
-#                     quote = message.content.split("=")[1][:-2]
-#                     author = message.content.split("=")[2]
+    if message.content.startswith(PREFIX):
+        cmd = message.content.split(" ")
+        match cmd[1]:
+            case "save":
+                if (len(cmd) >= 4):
+                    quote = message.content.split("=")[1][:-2]
+                    author = message.content.split("=")[2]
 
-#                     path = CreateQuote(quote, author, False)
-#                     filename = path.split("/")[len(path.split("/")) - 1]
+                    path = CreateQuote(quote, author, False)
+                    filename = path.split("/")[len(path.split("/")) - 1]
 
-#                     file = discord.File(path, filename=filename)
-#                     embed = discord.Embed()
-#                     embed.set_image(url=f"attachment://{filename}")
-#                     await client.get_channel(chId).send(file=file, embed=embed)
+                    file = discord.File(path, filename=filename)
+                    embed = discord.Embed()
+                    embed.set_image(url=f"attachment://{filename}")
+                    await client.get_channel(chId).send(file=file, embed=embed)
 
-#                     await message.channel.send(GetSuccessMessage())
-#                 else: await message.channel.send(GetErrorMessage(f"{PREFIX} save q=[quote] a=[author]"))
-#             case "image":
-#                 if (len(cmd) == 3):
-#                     try:
-#                         AddImage(cmd[2])
-#                     except: pass
-#                     await message.channel.send(GetSuccessMessage())
-#                 else: await message.channel.send(GetErrorMessage(f"{PREFIX} image [image url]"))
-#             case "help":
-#                 await message.channel.send("ok so")
-#                 await message.channel.send("there are literally only 2 commands")
-#                 await message.channel.send("here are them and their usages:")
-#                 await message.channel.send(f"`{PREFIX} save q=[quote] a=[author (victim??)]`")
-#                 await message.channel.send("this one just saves a quote in the quotebook")
-#                 await message.channel.send(f"`{PREFIX} image [image url]`")
-#                 await message.channel.send("and this one adds an image to the roster")
-#                 await message.channel.send("(oh, and only alex can remove them, so have fun :3)")
-#                 await message.channel.send("dm alex (lexicled) if you need anything else")
-#                 await message.channel.send("after all, im just a fuckin clanker lol")
-#             case _: await message.channel.send(GetErrorMessage(f"{PREFIX} [command: save/image/help]"))
+                    await message.channel.send(GetSuccessMessage())
+                else: await message.channel.send(GetErrorMessage(f"{PREFIX} save q=[quote] a=[author]"))
+            case "image":
+                if (len(cmd) == 3):
+                    try:
+                        AddImage(cmd[2])
+                    except: pass
+                    await message.channel.send(GetSuccessMessage())
+                else: await message.channel.send(GetErrorMessage(f"{PREFIX} image [image url]"))
+            case "help":
+                await message.channel.send("ok so")
+                await message.channel.send("there are literally only 2 commands")
+                await message.channel.send("here are them and their usages:")
+                await message.channel.send(f"`{PREFIX} save q=[quote] a=[author (victim??)]`")
+                await message.channel.send("this one just saves a quote in the quotebook")
+                await message.channel.send(f"`{PREFIX} image [image url]`")
+                await message.channel.send("and this one adds an image to the roster")
+                await message.channel.send("(oh, and only alex can remove them, so have fun :3)")
+                await message.channel.send("dm alex (lexicled) if you need anything else")
+                await message.channel.send("after all, im just a fuckin clanker lol")
+            case _: await message.channel.send(GetErrorMessage(f"{PREFIX} [command: save/image/help]"))
                 
-# client.run(GetToken())
+client.run(GetToken())

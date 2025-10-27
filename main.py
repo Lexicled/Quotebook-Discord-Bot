@@ -279,11 +279,16 @@ async def on_message(message):
             case _: await message.channel.send(GetErrorMessage(f"{PREFIX} [command: save/image/help]"))
 
 # Multithreading
-thread1 = Thread(target = client.run, args = (GetToken(), ))
-thread2 = Thread(target = webApp.run, args = ())
+def RunWebApp():
+    global webApp
+    webApp.run(host="0.0.0.0")
 
-thread1.start()
-thread2.start()
+if __name__ == "__main__":
+    thread1 = Thread(target = client.run, args = (GetToken(), ))
+    thread2 = Thread(target = RunWebApp, args = ())
 
-thread1.join()
-thread2.join()
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()

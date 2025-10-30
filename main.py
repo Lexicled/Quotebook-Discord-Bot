@@ -5,7 +5,10 @@ from io import BytesIO
 import random
 import json
 import os
-from flask import Flask
+from flask import Flask, render_template
+from flask_wtf import FlaskForm
+from wtforms import PasswordField
+from wtforms.validators import DataRequired
 from threading import Thread
 import uuid
 
@@ -112,6 +115,24 @@ def GetTextInfo(quote: str, author: str, maxWidth: int, maxHeight: int, sans: bo
 def GetToken() -> str:
     return os.getenv("DISCORD_TOKEN")
 
+def GetPassword() -> str:
+    return os.getenv("PSWD")
+
+def GetInsult() -> str:
+    insults = [
+        "*incorrect buzzer* WRONG!!!",
+        "try again (never)",
+        "are you dumb or stupid?",
+        "try again later. like when you're no longer here later :)",
+        "you got the wrong password",
+        "you're not me, f off",
+        "git gud",
+        "similarly to you, the password you entered was a mistake"
+    ]
+
+    i = random.randint(0, len(insults) - 1)
+    return insults[i]
+
 def GetChannelID() -> int:
     with open(PATH_TO_WORKING_DIR + "db/config.json", 'r') as f:
         data = json.loads(f.read())
@@ -203,10 +224,23 @@ def CreateQuote(quote: str, author: str, sans: bool) -> str:
     return filename
 
 # Flask web app
+class PswdForm(FlaskForm):
+    pswd = PasswordField("Enter password: ", validators=[DataRequired()])
+
 webApp = Flask(__name__)
-@webApp.route('/')
+webApp.secret_key = GetToken()
+
+@webApp.route('/', methods=['GET', 'POST'])
 def ServeFlaskToken():
-    return GetToken()
+    form = PswdForm()
+    message = ""
+    if form.validate_on_submit():
+        if form.pswd.data == GetPassword():
+            message = GetToken()
+        else:
+            message = GetInsult()
+    return render_template("index.html", form=form, message=message)
+    
 
 # Discord
 intents = discord.Intents.default()
@@ -287,8 +321,8 @@ if __name__ == "__main__":
     thread1 = Thread(target = client.run, args = (GetToken(), ))
     thread2 = Thread(target = RunWebApp, args = ())
 
-    thread1.start()
+    #thread1.start()
     thread2.start()
 
-    thread1.join()
+    #thread1.join()
     thread2.join()

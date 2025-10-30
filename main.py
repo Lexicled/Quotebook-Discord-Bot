@@ -321,8 +321,8 @@ if __name__ == "__main__":
     thread1 = Thread(target = client.run, args = (GetToken(), ))
     thread2 = Thread(target = RunWebApp, args = ())
 
-    #thread1.start()
+    thread1.start()
     thread2.start()
 
-    #thread1.join()
+    thread1.join()
     thread2.join()
